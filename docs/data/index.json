@@ -1,32 +1,55 @@
 {
-    "team": [
-        {
-            "name": "Team Member Name 1",
-            "email": "email@eng.pdn.ac.lk",
-            "eNumber": "E/yy/xxx"
-        },
-        {
-            "name": "Team Member Name 2",
-            "email": "email@eng.pdn.ac.lk",
-            "eNumber": "E/yy/xxx"
-        },
-        {
-            "name": "Team Member Name 3",
-            "email": "email@eng.pdn.ac.lk",
-            "eNumber": "E/yy/xxx"
-        }
-    ],
-    "supervisors": [
-        {
-            "name": "Dr. Supervisor 1",
-            "email": "email@eng.pdn.ac.lk"
-        },
-        {
-            "name": "Supervisor 2",
-            "email": "email@eng.pdn.ac.lk"
-        }
-    ],
-    "tags": ["Web", "Software Systems", "CO2060"],
-    "image":"cover_page.jpg",
-    "thumbnail":"thumbnail.jpg"
+  "projectTitle": "MyStay – Boarding Place Finder Web Application",
+
+  "team": [
+    {
+      "eNumber": "E/22/120",
+      "name": "A.S.V. Gunasiri",
+      "email": "e22120@eng.pdn.ac.lk"
+    },
+    {
+      "eNumber": "E/22/001",
+      "name": "H.M.H.N. Aberathna",
+      "email": "e22001@eng.pdn.ac.lk"
+    },
+    {
+      "eNumber": "E/22/027",
+      "name": "M.A.N.P. Anawarathne",
+      "email": "e22027@eng.pdn.ac.lk"
+    },
+    {
+      "eNumber": "E/22/324",
+      "name": "P.H.D. Rathnasiri",
+      "email": "e22324@eng.pdn.ac.lk"
+    }
+  ],
+
+  "tableOfContents": [
+    "Introduction",
+    "Solution Architecture",
+    "Software Designs",
+    "Testing",
+    "Conclusion",
+    "Links"
+  ],
+
+  "sections": {
+    "Introduction": "Finding suitable boarding places is a major challenge for students and working professionals due to scattered information, lack of transparency, and limited accessibility. MyStay is a web-based platform designed to centralize boarding place information and simplify the search process. The system allows users to search, filter, and view boarding listings based on location, price, and availability, while enabling landlords to manage listings efficiently.",
+
+    "SolutionArchitecture": "The system follows a modular and scalable architecture where different components interact to provide a seamless user experience. It supports user roles such as tenants and landlords, secure authentication, listing management, and search functionality. The architecture is designed to ensure maintainability, reliability, and future scalability.",
+
+    "SoftwareDesigns": "The software design focuses on usability, responsiveness, and clean user interaction flows. Core screens include the homepage, search results, listing details, and authentication pages. The design follows best practices in UI/UX, ensuring accessibility and ease of navigation across different devices.",
+
+    "Testing": "Testing is conducted at multiple levels to ensure system reliability and correctness. This includes unit testing for core functionalities, integration testing for interconnected modules, and manual testing to validate user workflows and edge cases.",
+
+    "Conclusion": "MyStay provides an efficient and user-friendly solution for managing and discovering boarding places. By centralizing information and improving accessibility, the platform reduces the effort required to find suitable accommodation while offering landlords a structured way to manage listings.",
+
+    "Links": {
+      "ProjectRepository": "https://github.com/cepdnaclk/e22-co2060-MyStay-Boarding-Platform",
+    }
+  },
+
+  "organization": "Department of Computer Engineering",
+  "university": "University of Peradeniya"
 }
+
