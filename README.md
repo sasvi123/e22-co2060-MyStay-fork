@@ -1,57 +1,58 @@
-___
-# DELETE THIS INSTRUCTIONS AND ADD AN INTRODUCTION ABOUT YOUR PROJECT
-___
+# MyStay – Boarding Place Finder Web Application
 
-# eYY-co2060-project-template
+MyStay is a web-based platform designed to help students and professionals find suitable boarding places quickly and efficiently. Users can search, filter, and view listings by location, price, and availability, while landlords can manage their listings easily through the platform.
 
-This is a sample repository you can use for your Software Systems Design Project. Once you followed these instructions, remove the text and add a brief introduction to here.
+![Cover Page](https://via.placeholder.com/940x352.png?text=MyStay+Cover+Page)
 
-### Enable GitHub Pages
+---
 
-You can put the things to be shown in GitHub pages into the _docs/_ folder. Both html and md file formats are supported. You need to go to settings and enable GitHub pages and select _main_ branch and _docs_ folder from the dropdowns, as shown in the below image.
+## Team
+- E/22/120, A.S.V. Gunasiri, [e22120@eng.pdn.ac.lk](mailto:e22120@eng.pdn.ac.lk)
+- E/22/001, H.M.H.N. Aberathna, [e22001@eng.pdn.ac.lk](mailto:e22001@eng.pdn.ac.lk)
+- E/22/027, M.A.N.P. Anawarathne, [e22027@eng.pdn.ac.lk](mailto:e22027@eng.pdn.ac.lk)
+- E/22/324, P.H.D. Rathnasiri, [e22324@eng.pdn.ac.lk](mailto:e22324@eng.pdn.ac.lk)
 
-![image](https://user-images.githubusercontent.com/11540782/98789936-028d3600-2429-11eb-84be-aaba665fdc75.png)
+---
 
-### Special Configurations
+## Table of Contents
+1. [Introduction](#introduction)
+2. [Solution Architecture](#solution-architecture)
+3. [Software Designs](#software-designs)
+4. [Testing](#testing)
+5. [Conclusion](#conclusion)
+6. [Links](#links)
 
-These projects will be automatically added into [https://projects.ce.pdn.ac.lk](). If you like to show more details about your project on this site, you can fill the parameters in the file, _/docs/index.json_
+---
 
-```
-{
-  "title": "This is the title of the project",
-  "team": [
-    {
-      "name": "Team Member Name 1",
-      "email": "email@eng.pdn.ac.lk",
-      "eNumber": "E/yy/xxx"
-    },
-    {
-      "name": "Team Member Name 2",
-      "email": "email@eng.pdn.ac.lk",
-      "eNumber": "E/yy/xxx"
-    },
-    {
-      "name": "Team Member Name 3",
-      "email": "email@eng.pdn.ac.lk",
-      "eNumber": "E/yy/xxx"
-    }
-  ],
-  "supervisors": [
-    {
-      "name": "Dr. Supervisor 1",
-      "email": "email@eng.pdn.ac.lk"
-    },
-    {
-      "name": "Supervisor 2",
-      "email": "email@eng.pdn.ac.lk"
-    }
-  ],
-  "tags": ["Web", "Software Systems", "CO2060"]
-}
-```
+## Introduction
+Finding suitable boarding places is often difficult due to scattered information and limited accessibility. **MyStay** centralizes this information, allowing users to search, filter, and view boarding listings based on location, price, and availability. Landlords can efficiently manage their listings through the platform.
 
-Once you filled this _index.json_ file, please verify the syntax is correct. (You can use [this](https://jsonlint.com/) tool).
+---
 
-### Page Theme
+## Solution Architecture
+MyStay follows a modular and scalable architecture. The system supports multiple user roles (tenants and landlords), secure authentication, listing management, and search functionality. The architecture ensures maintainability, reliability, and future scalability.
 
-A custom theme integrated with this GitHub Page, which is based on [github.com/cepdnaclk/eYY-project-theme](https://github.com/cepdnaclk/eYY-project-theme). If you like to remove this default theme, you can remove the file, _docs/\_config.yml_ and use HTML based website.
+---
+
+## Software Designs
+The design focuses on usability, responsiveness, and clean user interaction flows. Core screens include the homepage, search results, listing details, and authentication pages. The platform follows UI/UX best practices, ensuring accessibility across devices.
+
+---
+
+## Testing
+<!-- Testing section will be updated later -->
+*Testing is currently in progress and will be added here once complete.*
+
+---
+
+## Conclusion
+MyStay provides an efficient and user-friendly solution for discovering and managing boarding places. By centralizing information, it reduces the effort required to find accommodation and offers landlords a structured way to manage listings. Future developments may include mobile apps, AI-based recommendation systems, and expanded coverage.
+
+---
+
+## Links
+- [Project Repository](https://github.com/cepdnaclk/e22-co2060-MyStay-Boarding-Platform){:target="_blank"}
+- [Project Page](https://cepdnaclk.github.io/e22-co2060-MyStay-Boarding-Platform){:target="_blank"}
+- [Department of Computer Engineering, University of Peradeniya](http://www.ce.pdn.ac.lk/){:target="_blank"}
+- [University of Peradeniya](https://eng.pdn.ac.lk/){:target="_blank"}
+
