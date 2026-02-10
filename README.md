@@ -10,7 +10,7 @@ title: MyStay – Boarding Place Finder Web Application
 
 MyStay is a web-based platform designed to help students and professionals find suitable boarding places quickly and efficiently. Users can search, filter, and view listings by location, price, and availability, while landlords can manage their listings easily through the platform.
 
-![Cover Page](./docs/data/cover_page.jpg)
+![Cover Page](./docs/data/Cover_Page.png)
 
 ---
 
