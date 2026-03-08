@@ -10,13 +10,46 @@ export function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Mock login - in real app, this would authenticate with backend
-    console.log('Login attempt:', { email, password });
-    // Navigate to browse page after "login"
-    navigate('/browse');
+    setIsLoading(true);
+
+    try {
+      // Connect to your Express server (ensure port 3000 matches your server.js)
+      const response = await fetch('http://localhost:3000/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Login failed');
+      }
+
+      // --- AUTHENTICATION SUCCESS ---
+      // 1. Store the JWT token and user info in localStorage
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+
+      // 2. Alert and redirect
+      alert("Login successful!");
+      
+      // Optional: Role-based redirection
+      if (data.user.role === 'landlord') {
+        navigate('/landlord-dashboard');
+      } else {
+        navigate('/browse');
+      }
+
+    } catch (error: any) {
+      alert(error.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
