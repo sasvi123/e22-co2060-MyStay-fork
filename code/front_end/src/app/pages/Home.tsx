@@ -78,43 +78,43 @@ export function Home() {
           <h2 className="text-3xl font-bold text-center mb-12">Why Choose MyStay?</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
             <div className="text-center">
-              <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Search className="w-8 h-8 text-blue-600" />
+              <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Search className="w-8 h-8 text-green-600" />
               </div>
               <h3 className="font-bold mb-2">Advanced Search</h3>
               <p className="text-gray-600">Filter by location, price, room type, and facilities to find exactly what you need</p>
             </div>
             <div className="text-center">
-              <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <MapPin className="w-8 h-8 text-blue-600" />
+              <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <MapPin className="w-8 h-8 text-green-600" />
               </div>
               <h3 className="font-bold mb-2">Location-Based</h3>
               <p className="text-gray-600">See distance from University of Peradeniya and nearby amenities</p>
             </div>
             <div className="text-center">
-              <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Shield className="w-8 h-8 text-blue-600" />
+              <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Shield className="w-8 h-8 text-green-600" />
               </div>
               <h3 className="font-bold mb-2">Verified Listings</h3>
               <p className="text-gray-600">All listings are reviewed to ensure accuracy and reliability</p>
             </div>
             <div className="text-center">
-              <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Clock className="w-8 h-8 text-blue-600" />
+              <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Clock className="w-8 h-8 text-green-600" />
               </div>
               <h3 className="font-bold mb-2">Save Time</h3>
               <p className="text-gray-600">Browse multiple options in minutes instead of days of searching</p>
             </div>
             <div className="text-center">
-              <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <TrendingUp className="w-8 h-8 text-blue-600" />
+              <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <TrendingUp className="w-8 h-8 text-green-600" />
               </div>
               <h3 className="font-bold mb-2">Easy Management</h3>
               <p className="text-gray-600">Landlords can add, update, and manage listings with ease</p>
             </div>
             <div className="text-center">
-              <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Users className="w-8 h-8 text-blue-600" />
+              <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Users className="w-8 h-8 text-green-600" />
               </div>
               <h3 className="font-bold mb-2">User-Friendly</h3>
               <p className="text-gray-600">Simple, intuitive interface designed for students and landlords</p>
