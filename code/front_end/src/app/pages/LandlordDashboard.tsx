@@ -1,18 +1,17 @@
 import { useState } from 'react';
-import { PlusCircle, Edit, Trash2, Home } from 'lucide-react';
+import { PlusCircle, Edit, Trash2, Home, TrendingUp, Users } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import { Badge } from '../components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../components/ui/dialog';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Textarea } from '../components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
-import { mockListings, BoardingListing } from '../data/mockListings';
+import { mockListings } from '../data/mockListings';
 import { imageMapping } from '../data/imageMapping';
 
 export function LandlordDashboard() {
-  const [listings, setListings] = useState(mockListings.slice(0, 3)); // Show first 3 as user's listings
+  const [listings, setListings] = useState(mockListings.slice(0, 3));
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [newListing, setNewListing] = useState({
     title: '',
@@ -25,19 +24,9 @@ export function LandlordDashboard() {
   });
 
   const handleAddListing = () => {
-    // Mock add listing
     console.log('New listing:', newListing);
     setIsAddDialogOpen(false);
-    // Reset form
-    setNewListing({
-      title: '',
-      location: '',
-      price: '',
-      roomType: 'Single',
-      gender: 'Any',
-      facilities: '',
-      description: '',
-    });
+    setNewListing({ title: '', location: '', price: '', roomType: 'Single', gender: 'Any', facilities: '', description: '' });
   };
 
   const handleDelete = (id: string) => {
@@ -46,225 +35,177 @@ export function LandlordDashboard() {
     }
   };
 
+  const stats = [
+    { label: 'Total Listings', value: listings.length, icon: Home, color: '#1a7a6e', bg: '#e8f5f3' },
+    { label: 'Available', value: listings.filter((l) => l.availability === 'Available').length, icon: TrendingUp, color: '#52b788', bg: '#d8f3dc' },
+    { label: 'Occupied', value: listings.filter((l) => l.availability === 'Not Available').length, icon: Users, color: '#e07b39', bg: '#fdf0e8' },
+  ];
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-4xl font-bold mb-2">Landlord Dashboard</h1>
-            <p className="text-gray-600">Manage your boarding place listings</p>
-          </div>
-          
-          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-            <DialogTrigger asChild>
-              <Button size="lg">
-                <PlusCircle className="w-5 h-5 mr-2" />
-                Add New Listing
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>Add New Boarding Place</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4 py-4">
-                <div>
-                  <Label htmlFor="title">Title</Label>
-                  <Input
-                    id="title"
-                    placeholder="e.g., Comfortable Single Room Near Campus"
-                    value={newListing.title}
-                    onChange={(e) => setNewListing({ ...newListing, title: e.target.value })}
-                  />
-                </div>
+    <div className="min-h-screen" style={{ backgroundColor: '#f7fafa' }}>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="location">Location</Label>
-                    <Input
-                      id="location"
-                      placeholder="e.g., Peradeniya"
-                      value={newListing.location}
-                      onChange={(e) => setNewListing({ ...newListing, location: e.target.value })}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="price">Monthly Price (Rs.)</Label>
-                    <Input
-                      id="price"
-                      type="number"
-                      placeholder="e.g., 12000"
-                      value={newListing.price}
-                      onChange={(e) => setNewListing({ ...newListing, price: e.target.value })}
-                    />
-                  </div>
-                </div>
+      {/* Page Header */}
+      <div className="py-10" style={{ background: 'linear-gradient(135deg, #0d1f1d 0%, #1a7a6e 100%)' }}>
+        <div className="container mx-auto px-4">
+          <div className="flex items-end justify-between gap-4">
+            <div>
+              <p className="text-sm font-medium tracking-widest uppercase mb-2" style={{ color: '#52b788' }}>Dashboard</p>
+              <h1 className="text-4xl font-normal text-white" style={{ fontFamily: "'DM Serif Display', serif" }}>
+                Landlord Dashboard
+              </h1>
+              <p className="mt-2" style={{ color: 'rgba(255,255,255,0.65)' }}>Manage your boarding place listings</p>
+            </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="roomType">Room Type</Label>
-                    <Select value={newListing.roomType} onValueChange={(value) => setNewListing({ ...newListing, roomType: value })}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Single">Single</SelectItem>
-                        <SelectItem value="Double">Double</SelectItem>
-                        <SelectItem value="Triple">Triple</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="gender">Gender Preference</Label>
-                    <Select value={newListing.gender} onValueChange={(value) => setNewListing({ ...newListing, gender: value })}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Male">Male</SelectItem>
-                        <SelectItem value="Female">Female</SelectItem>
-                        <SelectItem value="Any">Any</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="facilities">Facilities (comma-separated)</Label>
-                  <Input
-                    id="facilities"
-                    placeholder="e.g., WiFi, Kitchen, Parking, Study Table"
-                    value={newListing.facilities}
-                    onChange={(e) => setNewListing({ ...newListing, facilities: e.target.value })}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    placeholder="Describe your boarding place..."
-                    rows={4}
-                    value={newListing.description}
-                    onChange={(e) => setNewListing({ ...newListing, description: e.target.value })}
-                  />
-                </div>
-
-                <Button onClick={handleAddListing} className="w-full">
+            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+              <DialogTrigger asChild>
+                <Button size="lg" className="gap-2 font-semibold flex-shrink-0" style={{ backgroundColor: '#e07b39', color: 'white', border: 'none' }}>
+                  <PlusCircle className="w-5 h-5" />
                   Add Listing
                 </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle style={{ fontFamily: "'DM Serif Display', serif", fontSize: '22px', fontWeight: 400 }}>
+                    Add New Boarding Place
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 py-2">
+                  <div>
+                    <Label htmlFor="title">Title</Label>
+                    <Input id="title" placeholder="e.g., Comfortable Single Room Near Campus"
+                      value={newListing.title} onChange={(e) => setNewListing({ ...newListing, title: e.target.value })} />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="location">Location</Label>
+                      <Input id="location" placeholder="e.g., Peradeniya"
+                        value={newListing.location} onChange={(e) => setNewListing({ ...newListing, location: e.target.value })} />
+                    </div>
+                    <div>
+                      <Label htmlFor="price">Monthly Price (Rs.)</Label>
+                      <Input id="price" type="number" placeholder="e.g., 12000"
+                        value={newListing.price} onChange={(e) => setNewListing({ ...newListing, price: e.target.value })} />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label>Room Type</Label>
+                      <Select value={newListing.roomType} onValueChange={(value) => setNewListing({ ...newListing, roomType: value })}>
+                        <SelectTrigger><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Single">Single</SelectItem>
+                          <SelectItem value="Double">Double</SelectItem>
+                          <SelectItem value="Triple">Triple</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label>Gender Preference</Label>
+                      <Select value={newListing.gender} onValueChange={(value) => setNewListing({ ...newListing, gender: value })}>
+                        <SelectTrigger><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Male">Male</SelectItem>
+                          <SelectItem value="Female">Female</SelectItem>
+                          <SelectItem value="Any">Any</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <div>
+                    <Label htmlFor="facilities">Facilities (comma-separated)</Label>
+                    <Input id="facilities" placeholder="e.g., WiFi, Kitchen, Parking, Study Table"
+                      value={newListing.facilities} onChange={(e) => setNewListing({ ...newListing, facilities: e.target.value })} />
+                  </div>
+                  <div>
+                    <Label htmlFor="description">Description</Label>
+                    <Textarea id="description" placeholder="Describe your boarding place…" rows={4}
+                      value={newListing.description} onChange={(e) => setNewListing({ ...newListing, description: e.target.value })} />
+                  </div>
+                  <Button onClick={handleAddListing} className="w-full font-semibold" style={{ backgroundColor: '#1a7a6e', color: 'white', border: 'none' }}>
+                    Add Listing
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
+      </div>
 
-        {/* Statistics */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600 mb-1">Total Listings</p>
-                  <p className="text-3xl font-bold">{listings.length}</p>
-                </div>
-                <Home className="w-12 h-12 text-blue-600 opacity-20" />
-              </div>
-            </CardContent>
-          </Card>
+      <div className="container mx-auto px-4 py-8">
 
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600 mb-1">Available</p>
-                  <p className="text-3xl font-bold text-green-600">
-                    {listings.filter((l) => l.availability === 'Available').length}
-                  </p>
+        {/* Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
+          {stats.map(({ label, value, icon: Icon, color, bg }) => (
+            <Card key={label} className="shadow-sm border-0" style={{ border: '1px solid rgba(26,122,110,0.1)' }}>
+              <CardContent className="pt-5 pb-5">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm mb-1" style={{ color: '#5a7874' }}>{label}</p>
+                    <p className="text-3xl font-bold" style={{ color, fontFamily: "'DM Serif Display', serif" }}>{value}</p>
+                  </div>
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: bg }}>
+                    <Icon className="w-6 h-6" style={{ color }} />
+                  </div>
                 </div>
-                <Home className="w-12 h-12 text-green-600 opacity-20" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600 mb-1">Occupied</p>
-                  <p className="text-3xl font-bold text-gray-600">
-                    {listings.filter((l) => l.availability === 'Not Available').length}
-                  </p>
-                </div>
-                <Home className="w-12 h-12 text-gray-600 opacity-20" />
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          ))}
         </div>
 
         {/* Listings */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Your Listings</CardTitle>
+        <Card className="shadow-sm border-0" style={{ border: '1px solid rgba(26,122,110,0.1)' }}>
+          <CardHeader className="pb-4">
+            <CardTitle style={{ fontFamily: "'DM Serif Display', serif", fontWeight: 400, fontSize: '22px', color: '#0d1f1d' }}>
+              Your Listings
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {listings.map((listing) => (
-                <div
-                  key={listing.id}
-                  className="flex items-start gap-4 p-4 border rounded-lg hover:shadow-md transition-shadow"
-                >
-                  <div className="w-32 h-32 flex-shrink-0 overflow-hidden rounded-lg">
-                    <img
-                      src={imageMapping[listing.images[0]]}
-                      alt={listing.title}
-                      className="w-full h-full object-cover"
-                    />
+                <div key={listing.id} className="flex items-start gap-4 p-4 rounded-xl transition-shadow hover:shadow-md" style={{ border: '1px solid rgba(26,122,110,0.1)', backgroundColor: 'white' }}>
+                  <div className="w-28 h-28 flex-shrink-0 overflow-hidden rounded-xl">
+                    <img src={imageMapping[listing.images[0]]} alt={listing.title} className="w-full h-full object-cover" />
                   </div>
 
-                  <div className="flex-1">
-                    <div className="flex items-start justify-between mb-2">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between mb-2 gap-2">
                       <div>
-                        <h3 className="font-bold text-lg">{listing.title}</h3>
-                        <p className="text-gray-600">{listing.location}</p>
+                        <h3 className="font-semibold" style={{ color: '#0d1f1d' }}>{listing.title}</h3>
+                        <p className="text-sm" style={{ color: '#5a7874' }}>{listing.location}</p>
                       </div>
-                      {listing.availability === 'Available' ? (
-                        <Badge className="bg-green-500">Available</Badge>
-                      ) : (
-                        <Badge variant="secondary">Not Available</Badge>
-                      )}
+                      <span
+                        className="px-2.5 py-1 rounded-full text-xs font-semibold flex-shrink-0"
+                        style={
+                          listing.availability === 'Available'
+                            ? { backgroundColor: '#d8f3dc', color: '#1a5c30' }
+                            : { backgroundColor: '#eff6f5', color: '#5a7874' }
+                        }
+                      >
+                        {listing.availability}
+                      </span>
                     </div>
 
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mb-4">
-                      <div>
-                        <p className="text-gray-600">Price</p>
-                        <p className="font-semibold">Rs. {listing.price.toLocaleString()}/mo</p>
-                      </div>
-                      <div>
-                        <p className="text-gray-600">Room Type</p>
-                        <p className="font-semibold">{listing.roomType}</p>
-                      </div>
-                      <div>
-                        <p className="text-gray-600">Gender</p>
-                        <p className="font-semibold">{listing.gender}</p>
-                      </div>
-                      <div>
-                        <p className="text-gray-600">Rating</p>
-                        <p className="font-semibold">⭐ {listing.rating}</p>
-                      </div>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm mb-4">
+                      {[
+                        { label: 'Price', value: `Rs. ${listing.price.toLocaleString()}/mo` },
+                        { label: 'Room Type', value: listing.roomType },
+                        { label: 'Gender', value: listing.gender },
+                        { label: 'Rating', value: `⭐ ${listing.rating}` },
+                      ].map(({ label, value }) => (
+                        <div key={label}>
+                          <p className="text-xs mb-0.5" style={{ color: '#5a7874' }}>{label}</p>
+                          <p className="font-semibold text-sm" style={{ color: '#0d1f1d' }}>{value}</p>
+                        </div>
+                      ))}
                     </div>
 
                     <div className="flex gap-2">
-                      <Button variant="outline" size="sm">
-                        <Edit className="w-4 h-4 mr-1" />
-                        Edit
+                      <Button variant="outline" size="sm" className="gap-1.5 text-xs" style={{ borderColor: 'rgba(26,122,110,0.25)', color: '#1a7a6e' }}>
+                        <Edit className="w-3.5 h-3.5" /> Edit
                       </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDelete(listing.id)}
-                        className="text-red-600 hover:text-red-700"
-                      >
-                        <Trash2 className="w-4 h-4 mr-1" />
-                        Delete
+                      <Button variant="outline" size="sm" className="gap-1.5 text-xs" style={{ borderColor: 'rgba(212,24,61,0.25)', color: '#d4183d' }}
+                        onClick={() => handleDelete(listing.id)}>
+                        <Trash2 className="w-3.5 h-3.5" /> Delete
                       </Button>
                     </div>
                   </div>
@@ -272,10 +213,12 @@ export function LandlordDashboard() {
               ))}
 
               {listings.length === 0 && (
-                <div className="text-center py-12 text-gray-500">
-                  <Home className="w-16 h-16 mx-auto mb-4 opacity-20" />
-                  <p className="text-lg">No listings yet</p>
-                  <p className="text-sm">Click "Add New Listing" to create your first listing</p>
+                <div className="text-center py-16">
+                  <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: '#e8f5f3' }}>
+                    <Home className="w-8 h-8" style={{ color: '#1a7a6e' }} />
+                  </div>
+                  <h3 className="font-semibold mb-1" style={{ color: '#0d1f1d' }}>No listings yet</h3>
+                  <p className="text-sm" style={{ color: '#5a7874' }}>Click "Add Listing" to create your first listing</p>
                 </div>
               )}
             </div>
