@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router';
 import { Search, MapPin, DollarSign, Users, Star, SlidersHorizontal, X } from 'lucide-react';
 import { Input } from '../components/ui/input';
@@ -15,9 +15,43 @@ export function Browse() {
   const [roomTypeFilter, setRoomTypeFilter] = useState<string>('all');
   const [availabilityFilter, setAvailabilityFilter] = useState<string>('all');
   const [genderFilter, setGenderFilter] = useState<string>('all');
+  const [listings, setListings] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
 
-  const filteredListings = mockListings.filter((listing) => {
+  useEffect(() => {
+    const fetchListings = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/api/stays');
+        if (response.ok) {
+          const data = await response.json();
+          // Map backend fields to frontend expectations, using defaults for images/rating
+          const formattedData = data.map((stay: any) => ({
+            ...stay,
+            id: stay.stay_id.toString(),
+            location: stay.address,
+            facilities: stay.facilities ? stay.facilities.split(',').map((f: string) => f.trim()) : [],
+            images: ['bedroom-study-desk', 'modern-bathroom'], 
+            rating: 4.5, 
+            distance: 'Unknown distance', 
+            availability: stay.availability || 'Available',
+            price: Number(stay.price),
+            roomType: stay.roomType || 'Single',
+            gender: stay.gender || 'Any',
+          }));
+          setListings(formattedData);
+        }
+      } catch (error) {
+        console.error('Failed to fetch listings:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchListings();
+  }, []);
+
+  const filteredListings = listings.filter((listing) => {
     const matchesSearch =
       listing.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       listing.location.toLowerCase().includes(searchTerm.toLowerCase());
@@ -57,6 +91,9 @@ export function Browse() {
           <p className="mt-2" style={{ color: 'rgba(255,255,255,0.65)' }}>
             Find your perfect room near University of Peradeniya
           </p>
+          <Link to="/landlord-dashboard">
+            <Button variant="outline">Post a Boarding Place</Button>
+          </Link>
         </div>
       </div>
 
@@ -156,7 +193,12 @@ export function Browse() {
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {isLoading ? (
+          <div className="text-center py-20">
+            <p className="text-sm font-medium" style={{ color: '#5a7874' }}>Loading listings...</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredListings.map((listing) => (
             <Link key={listing.id} to={`/listing/${listing.id}`}>
               <Card className="h-full cursor-pointer overflow-hidden shadow-sm hover:shadow-lg transition-all duration-200 group border-0" style={{ border: '1px solid rgba(26,122,110,0.1)' }}>
@@ -206,7 +248,7 @@ export function Browse() {
                   </div>
 
                   <div className="flex flex-wrap gap-1.5">
-                    {listing.facilities.slice(0, 3).map((f, i) => (
+                    {listing.facilities.slice(0, 3).map((f: string, i: number) => (
                       <span key={i} className="px-2 py-0.5 rounded-full text-xs font-medium" style={{ backgroundColor: '#e8f5f3', color: '#1a7a6e' }}>
                         {f}
                       </span>
@@ -221,10 +263,11 @@ export function Browse() {
               </Card>
             </Link>
           ))}
-        </div>
+          </div>
+        )}
 
         {/* Empty state */}
-        {filteredListings.length === 0 && (
+        {!isLoading && filteredListings.length === 0 && (
           <div className="text-center py-20">
             <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: '#e8f5f3' }}>
               <Search className="w-8 h-8" style={{ color: '#1a7a6e' }} />

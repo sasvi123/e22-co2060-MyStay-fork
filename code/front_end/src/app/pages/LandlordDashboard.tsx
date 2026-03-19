@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { PlusCircle, Edit, Trash2, Home, TrendingUp, Users } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
@@ -7,13 +7,80 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Textarea } from '../components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
-import { mockListings } from '../data/mockListings';
+import { mockListings, BoardingListing } from '../data/mockListings';
 import { imageMapping } from '../data/imageMapping';
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import L from 'leaflet';
+// @ts-expect-error
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
+// @ts-expect-error
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+// @ts-expect-error
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+
+// Fix for default marker icons in react-leaflet
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconUrl: markerIcon,
+  iconRetinaUrl: markerIcon2x,
+  shadowUrl: markerShadow,
+});
+
+function LocationPicker({ position, setPosition }: { position: { lat: number, lng: number } | undefined, setPosition: (pos: { lat: number, lng: number }) => void }) {
+  useMapEvents({
+    click(e) {
+      setPosition({ lat: e.latlng.lat, lng: e.latlng.lng });
+    },
+  });
+  return position ? <Marker position={[position.lat, position.lng]} /> : null;
+}
 
 export function LandlordDashboard() {
-  const [listings, setListings] = useState(mockListings.slice(0, 3));
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [newListing, setNewListing] = useState({
+  const [listings, setListings] = useState<any[]>([]);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchListings = async () => {
+    setIsLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:3000/api/stays', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        // Map backend fields to what the frontend expects (id vs stay_id, address vs location, and add dummy images)
+        const formattedData = data.map((stay: any) => ({
+          ...stay,
+          id: stay.stay_id.toString(),
+          location: stay.address,
+          facilities: stay.facilities ? stay.facilities.split(',').map((f: string) => f.trim()) : [],
+          images: ['bedroom-study-desk', 'modern-bathroom'], // Dummy images since they aren't in DB yet
+          rating: 4.5, // Dummy rating
+          distance: 'Unknown distance', // Dummy distance
+          availability: stay.availability || 'Available',
+          price: Number(stay.price),
+          roomType: stay.roomType || 'Single',
+          gender: stay.gender || 'Any',
+        }));
+        setListings(formattedData);
+      }
+    } catch (error) {
+      console.error('Failed to fetch listings:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchListings();
+  }, []);
+
+  const defaultListing = {
     title: '',
     location: '',
     price: '',
@@ -21,12 +88,82 @@ export function LandlordDashboard() {
     gender: 'Any',
     facilities: '',
     description: '',
-  });
+    latitude: undefined as number | undefined,
+    longitude: undefined as number | undefined,
+  };
+  
+  const [newListing, setNewListing] = useState(defaultListing);
 
-  const handleAddListing = () => {
-    console.log('New listing:', newListing);
-    setIsAddDialogOpen(false);
-    setNewListing({ title: '', location: '', price: '', roomType: 'Single', gender: 'Any', facilities: '', description: '' });
+  const handleOpenAdd = () => {
+    setIsEditMode(false);
+    setEditingId(null);
+    setNewListing(defaultListing);
+    setIsDialogOpen(true);
+  };
+
+  const handleEdit = (listing: any) => {
+    setIsEditMode(true);
+    setEditingId(listing.id);
+    setNewListing({
+      title: listing.title,
+      location: listing.location,
+      price: listing.price.toString(),
+      roomType: listing.roomType,
+      gender: listing.gender,
+      facilities: Array.isArray(listing.facilities) ? listing.facilities.join(', ') : listing.facilities,
+      description: listing.description,
+      latitude: listing.latitude,
+      longitude: listing.longitude,
+    });
+    setIsDialogOpen(true);
+  };
+
+  const handleSaveListing = async () => {
+    if (isEditMode && editingId) {
+      // In a real app, update the backend here with a PUT request
+      setListings(listings.map(l => l.id === editingId ? { 
+        ...l, 
+        ...newListing, 
+        price: Number(newListing.price), 
+        facilities: newListing.facilities.split(',').map(s=>s.trim()) 
+      } : l));
+      setIsDialogOpen(false);
+    } else {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('http://localhost:3000/api/stays', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            title: newListing.title,
+            description: newListing.description,
+            price: Number(newListing.price),
+            address: newListing.location,
+            latitude: newListing.latitude || 6.9271, // fallback to Colombo 
+            longitude: newListing.longitude || 79.8612,
+            roomType: newListing.roomType,
+            gender: newListing.gender,
+            facilities: newListing.facilities,
+            availability: 'Available' // Default for new listings
+          })
+        });
+
+        if (response.ok) {
+          alert('Listing added successfully!');
+          fetchListings(); // Refresh the list
+          setIsDialogOpen(false);
+        } else {
+          const data = await response.json();
+          alert(`Error: ${data.error}`);
+        }
+      } catch (error) {
+        console.error('Failed to save listing:', error);
+        alert('Failed to save listing. Please try again.');
+      }
+    }
   };
 
   const handleDelete = (id: string) => {
@@ -56,17 +193,18 @@ export function LandlordDashboard() {
               <p className="mt-2" style={{ color: 'rgba(255,255,255,0.65)' }}>Manage your boarding place listings</p>
             </div>
 
-            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-              <DialogTrigger asChild>
-                <Button size="lg" className="gap-2 font-semibold flex-shrink-0" style={{ backgroundColor: '#e07b39', color: 'white', border: 'none' }}>
-                  <PlusCircle className="w-5 h-5" />
-                  Add Listing
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            {localStorage.getItem('user') && JSON.parse(localStorage.getItem('user') as string).role === 'landlord' && (
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button size="lg" className="gap-2 font-semibold flex-shrink-0" style={{ backgroundColor: '#e07b39', color: 'white', border: 'none' }} onClick={handleOpenAdd}>
+                    <PlusCircle className="w-5 h-5" />
+                    Add Listing
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle style={{ fontFamily: "'DM Serif Display', serif", fontSize: '22px', fontWeight: 400 }}>
-                    Add New Boarding Place
+                    {isEditMode ? 'Edit Boarding Place' : 'Add New Boarding Place'}
                   </DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4 py-2">
@@ -121,12 +259,36 @@ export function LandlordDashboard() {
                     <Textarea id="description" placeholder="Describe your boarding place…" rows={4}
                       value={newListing.description} onChange={(e) => setNewListing({ ...newListing, description: e.target.value })} />
                   </div>
-                  <Button onClick={handleAddListing} className="w-full font-semibold" style={{ backgroundColor: '#1a7a6e', color: 'white', border: 'none' }}>
-                    Add Listing
+                  
+                  <div className="space-y-2">
+                    <Label>Location Map (Optional)</Label>
+                    <div className="h-[250px] rounded-lg overflow-hidden border">
+                      <MapContainer center={[newListing.latitude || 6.9271, newListing.longitude || 79.8612]} zoom={13} style={{ height: '100%', zIndex: 0 }}>
+                        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                        <LocationPicker 
+                          position={newListing.latitude && newListing.longitude ? { lat: newListing.latitude, lng: newListing.longitude } : undefined} 
+                          setPosition={(pos) => setNewListing({ ...newListing, latitude: pos.lat, longitude: pos.lng })} 
+                        />
+                      </MapContainer>
+                    </div>
+                    {newListing.latitude && newListing.longitude ? (
+                      <p className="text-xs text-muted-foreground text-center">
+                        Coords: {newListing.latitude.toFixed(4)}, {newListing.longitude.toFixed(4)}
+                      </p>
+                    ) : (
+                      <p className="text-xs text-muted-foreground text-center">
+                        Click on the map to set location coordinates.
+                      </p>
+                    )}
+                  </div>
+
+                  <Button onClick={handleSaveListing} className="w-full font-semibold" style={{ backgroundColor: '#1a7a6e', color: 'white', border: 'none' }}>
+                    {isEditMode ? 'Save Changes' : 'Add Listing'}
                   </Button>
                 </div>
               </DialogContent>
             </Dialog>
+            )}
           </div>
         </div>
       </div>
@@ -200,7 +362,7 @@ export function LandlordDashboard() {
                     </div>
 
                     <div className="flex gap-2">
-                      <Button variant="outline" size="sm" className="gap-1.5 text-xs" style={{ borderColor: 'rgba(26,122,110,0.25)', color: '#1a7a6e' }}>
+                      <Button variant="outline" size="sm" className="gap-1.5 text-xs" style={{ borderColor: 'rgba(26,122,110,0.25)', color: '#1a7a6e' }} onClick={() => handleEdit(listing)}>
                         <Edit className="w-3.5 h-3.5" /> Edit
                       </Button>
                       <Button variant="outline" size="sm" className="gap-1.5 text-xs" style={{ borderColor: 'rgba(212,24,61,0.25)', color: '#d4183d' }}
@@ -212,7 +374,11 @@ export function LandlordDashboard() {
                 </div>
               ))}
 
-              {listings.length === 0 && (
+              {isLoading ? (
+                <div className="text-center py-16">
+                  <p className="text-sm" style={{ color: '#5a7874' }}>Loading listings...</p>
+                </div>
+              ) : listings.length === 0 ? (
                 <div className="text-center py-16">
                   <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: '#e8f5f3' }}>
                     <Home className="w-8 h-8" style={{ color: '#1a7a6e' }} />
@@ -220,7 +386,7 @@ export function LandlordDashboard() {
                   <h3 className="font-semibold mb-1" style={{ color: '#0d1f1d' }}>No listings yet</h3>
                   <p className="text-sm" style={{ color: '#5a7874' }}>Click "Add Listing" to create your first listing</p>
                 </div>
-              )}
+              ) : null}
             </div>
           </CardContent>
         </Card>
