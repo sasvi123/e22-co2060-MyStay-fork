@@ -11,11 +11,8 @@ import { mockListings, BoardingListing } from '../data/mockListings';
 import { imageMapping } from '../data/imageMapping';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
-// @ts-expect-error
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
-// @ts-expect-error
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
-// @ts-expect-error
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 
 // Fix for default marker icons in react-leaflet
@@ -91,7 +88,7 @@ export function LandlordDashboard() {
     latitude: undefined as number | undefined,
     longitude: undefined as number | undefined,
   };
-  
+
   const [newListing, setNewListing] = useState(defaultListing);
 
   const handleOpenAdd = () => {
@@ -121,11 +118,11 @@ export function LandlordDashboard() {
   const handleSaveListing = async () => {
     if (isEditMode && editingId) {
       // In a real app, update the backend here with a PUT request
-      setListings(listings.map(l => l.id === editingId ? { 
-        ...l, 
-        ...newListing, 
-        price: Number(newListing.price), 
-        facilities: newListing.facilities.split(',').map(s=>s.trim()) 
+      setListings(listings.map(l => l.id === editingId ? {
+        ...l,
+        ...newListing,
+        price: Number(newListing.price),
+        facilities: newListing.facilities.split(',').map(s => s.trim())
       } : l));
       setIsDialogOpen(false);
     } else {
@@ -202,92 +199,92 @@ export function LandlordDashboard() {
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle style={{ fontFamily: "'DM Serif Display', serif", fontSize: '22px', fontWeight: 400 }}>
-                    {isEditMode ? 'Edit Boarding Place' : 'Add New Boarding Place'}
-                  </DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4 py-2">
-                  <div>
-                    <Label htmlFor="title">Title</Label>
-                    <Input id="title" placeholder="e.g., Comfortable Single Room Near Campus"
-                      value={newListing.title} onChange={(e) => setNewListing({ ...newListing, title: e.target.value })} />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <DialogHeader>
+                    <DialogTitle style={{ fontFamily: "'DM Serif Display', serif", fontSize: '22px', fontWeight: 400 }}>
+                      {isEditMode ? 'Edit Boarding Place' : 'Add New Boarding Place'}
+                    </DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4 py-2">
                     <div>
-                      <Label htmlFor="location">Location</Label>
-                      <Input id="location" placeholder="e.g., Peradeniya"
-                        value={newListing.location} onChange={(e) => setNewListing({ ...newListing, location: e.target.value })} />
+                      <Label htmlFor="title">Title</Label>
+                      <Input id="title" placeholder="e.g., Comfortable Single Room Near Campus"
+                        value={newListing.title} onChange={(e) => setNewListing({ ...newListing, title: e.target.value })} />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="location">Location</Label>
+                        <Input id="location" placeholder="e.g., Peradeniya"
+                          value={newListing.location} onChange={(e) => setNewListing({ ...newListing, location: e.target.value })} />
+                      </div>
+                      <div>
+                        <Label htmlFor="price">Monthly Price (Rs.)</Label>
+                        <Input id="price" type="number" placeholder="e.g., 12000"
+                          value={newListing.price} onChange={(e) => setNewListing({ ...newListing, price: e.target.value })} />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label>Room Type</Label>
+                        <Select value={newListing.roomType} onValueChange={(value) => setNewListing({ ...newListing, roomType: value })}>
+                          <SelectTrigger><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Single">Single</SelectItem>
+                            <SelectItem value="Double">Double</SelectItem>
+                            <SelectItem value="Triple">Triple</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label>Gender Preference</Label>
+                        <Select value={newListing.gender} onValueChange={(value) => setNewListing({ ...newListing, gender: value })}>
+                          <SelectTrigger><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Male">Male</SelectItem>
+                            <SelectItem value="Female">Female</SelectItem>
+                            <SelectItem value="Any">Any</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
                     <div>
-                      <Label htmlFor="price">Monthly Price (Rs.)</Label>
-                      <Input id="price" type="number" placeholder="e.g., 12000"
-                        value={newListing.price} onChange={(e) => setNewListing({ ...newListing, price: e.target.value })} />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label>Room Type</Label>
-                      <Select value={newListing.roomType} onValueChange={(value) => setNewListing({ ...newListing, roomType: value })}>
-                        <SelectTrigger><SelectValue /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Single">Single</SelectItem>
-                          <SelectItem value="Double">Double</SelectItem>
-                          <SelectItem value="Triple">Triple</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <Label htmlFor="facilities">Facilities (comma-separated)</Label>
+                      <Input id="facilities" placeholder="e.g., WiFi, Kitchen, Parking, Study Table"
+                        value={newListing.facilities} onChange={(e) => setNewListing({ ...newListing, facilities: e.target.value })} />
                     </div>
                     <div>
-                      <Label>Gender Preference</Label>
-                      <Select value={newListing.gender} onValueChange={(value) => setNewListing({ ...newListing, gender: value })}>
-                        <SelectTrigger><SelectValue /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Male">Male</SelectItem>
-                          <SelectItem value="Female">Female</SelectItem>
-                          <SelectItem value="Any">Any</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <Label htmlFor="description">Description</Label>
+                      <Textarea id="description" placeholder="Describe your boarding place…" rows={4}
+                        value={newListing.description} onChange={(e) => setNewListing({ ...newListing, description: e.target.value })} />
                     </div>
-                  </div>
-                  <div>
-                    <Label htmlFor="facilities">Facilities (comma-separated)</Label>
-                    <Input id="facilities" placeholder="e.g., WiFi, Kitchen, Parking, Study Table"
-                      value={newListing.facilities} onChange={(e) => setNewListing({ ...newListing, facilities: e.target.value })} />
-                  </div>
-                  <div>
-                    <Label htmlFor="description">Description</Label>
-                    <Textarea id="description" placeholder="Describe your boarding place…" rows={4}
-                      value={newListing.description} onChange={(e) => setNewListing({ ...newListing, description: e.target.value })} />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label>Location Map (Optional)</Label>
-                    <div className="h-[250px] rounded-lg overflow-hidden border">
-                      <MapContainer center={[newListing.latitude || 6.9271, newListing.longitude || 79.8612]} zoom={13} style={{ height: '100%', zIndex: 0 }}>
-                        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                        <LocationPicker 
-                          position={newListing.latitude && newListing.longitude ? { lat: newListing.latitude, lng: newListing.longitude } : undefined} 
-                          setPosition={(pos) => setNewListing({ ...newListing, latitude: pos.lat, longitude: pos.lng })} 
-                        />
-                      </MapContainer>
-                    </div>
-                    {newListing.latitude && newListing.longitude ? (
-                      <p className="text-xs text-muted-foreground text-center">
-                        Coords: {newListing.latitude.toFixed(4)}, {newListing.longitude.toFixed(4)}
-                      </p>
-                    ) : (
-                      <p className="text-xs text-muted-foreground text-center">
-                        Click on the map to set location coordinates.
-                      </p>
-                    )}
-                  </div>
 
-                  <Button onClick={handleSaveListing} className="w-full font-semibold" style={{ backgroundColor: '#1a7a6e', color: 'white', border: 'none' }}>
-                    {isEditMode ? 'Save Changes' : 'Add Listing'}
-                  </Button>
-                </div>
-              </DialogContent>
-            </Dialog>
+                    <div className="space-y-2">
+                      <Label>Location Map (Optional)</Label>
+                      <div className="h-[250px] rounded-lg overflow-hidden border">
+                        <MapContainer center={[newListing.latitude || 6.9271, newListing.longitude || 79.8612]} zoom={13} style={{ height: '100%', zIndex: 0 }}>
+                          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                          <LocationPicker
+                            position={newListing.latitude && newListing.longitude ? { lat: newListing.latitude, lng: newListing.longitude } : undefined}
+                            setPosition={(pos) => setNewListing({ ...newListing, latitude: pos.lat, longitude: pos.lng })}
+                          />
+                        </MapContainer>
+                      </div>
+                      {newListing.latitude && newListing.longitude ? (
+                        <p className="text-xs text-muted-foreground text-center">
+                          Coords: {newListing.latitude.toFixed(4)}, {newListing.longitude.toFixed(4)}
+                        </p>
+                      ) : (
+                        <p className="text-xs text-muted-foreground text-center">
+                          Click on the map to set location coordinates.
+                        </p>
+                      )}
+                    </div>
+
+                    <Button onClick={handleSaveListing} className="w-full font-semibold" style={{ backgroundColor: '#1a7a6e', color: 'white', border: 'none' }}>
+                      {isEditMode ? 'Save Changes' : 'Add Listing'}
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
             )}
           </div>
         </div>
