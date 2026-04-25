@@ -20,7 +20,7 @@ const pool = mysql.createPool({
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME, // This will use 'mystay_db'
     ssl: {
-        ca: fs.readFileSync('./ca.pem'),
+        ca: fs.existsSync('./ca.pem') ? fs.readFileSync('./ca.pem') : undefined,
         rejectUnauthorized: false,
     },
     waitForConnections: true,
