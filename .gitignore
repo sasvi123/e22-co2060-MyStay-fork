@@ -1,5 +1,9 @@
 # Dependency directories
 node_modules/
+<<<<<<< HEAD
+=======
+jspm_packages/
+>>>>>>> aa463707be2090bde0fb7d7e106aaa4b7bcff39f
 
 # Environment variables and secrets (CRITICAL)
 .env
@@ -14,6 +18,10 @@ ca.pem
 # Build outputs
 dist/
 build/
+<<<<<<< HEAD
+=======
+.next/
+>>>>>>> aa463707be2090bde0fb7d7e106aaa4b7bcff39f
 out/
 
 # IDE / Editor folders
@@ -34,4 +42,10 @@ logs/
 
 # OS Metadata
 .DS_Store
+<<<<<<< HEAD
 Thumbs.db
+=======
+Thumbs.db
+.env
+code/backend/.env
+>>>>>>> aa463707be2090bde0fb7d7e106aaa4b7bcff39f
