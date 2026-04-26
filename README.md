@@ -64,19 +64,3 @@ MyStay provides an efficient and user-friendly solution for discovering and mana
 - [Department of Computer Engineering, University of Peradeniya](http://www.ce.pdn.ac.lk/){:target="_blank"}
 - [University of Peradeniya](https://eng.pdn.ac.lk/){:target="_blank"}
 
-## 🧪 Backend Testing
-
-Automated backend test cases were added using **Jest** and **Supertest**.
-
-### Test Coverage Includes:
-- Authentication (login/register)
-- Stay API endpoints
-- Security testing (SQL injection, XSS)
-- Error handling
-
-### How to Run Tests
-
-```bash
-cd code/backend
-npm install
-npm test
