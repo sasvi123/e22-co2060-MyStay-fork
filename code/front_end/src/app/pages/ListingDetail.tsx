@@ -4,10 +4,12 @@ import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { mockListings } from '../data/mockListings';
 import { imageMapping } from '../data/imageMapping';
-
+import { ReviewSection } from '../components/ReviewSection';
 export function ListingDetail() {
   const { id } = useParams();
   const listing = mockListings.find((l) => l.id === id);
+
+  const currentUser = JSON.parse(localStorage.getItem('user') || 'null');
 
   if (!listing) {
     return (
@@ -154,6 +156,9 @@ export function ListingDetail() {
                 </div>
               </CardContent>
             </Card>
+
+            {/* --- 3. Add the ReviewSection component here --- */}
+            <ReviewSection listingId={id} currentUser={currentUser} />
           </div>
 
           {/* ── Sidebar ── */}

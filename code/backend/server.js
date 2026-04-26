@@ -7,7 +7,9 @@ require('dotenv').config();
 const app = express();
 
 // --- MIDDLEWARE ---
-app.use(cors());
+app.use(cors({origin: ['http://localhost:5174','http://localhost:5173'], // Ensure this matches your terminal output
+    credentials: true
+}));
 app.use(express.json());
 
 // --- DATABASE CONNECTION (Aiven) ---
@@ -18,7 +20,7 @@ const pool = mysql.createPool({
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME, // This will use 'mystay_db'
     ssl: {
-        ca: fs.readFileSync('./ca.pem'),
+        ca: fs.existsSync('./ca.pem') ? fs.readFileSync('./ca.pem') : undefined,
         rejectUnauthorized: false,
     },
     waitForConnections: true,
@@ -47,12 +49,19 @@ app.use((req, res, next) => {
 // --- ROUTES ---
 const authRoutes = require('./routes/auth');
 const stayRoutes = require('./routes/stayRoutes');
+const reviewRoutes = require('./routes/reviewRoutes'); // 1. Import your new review routes
 
 app.use('/api/auth', authRoutes);
 app.use('/api/stays', stayRoutes);
+app.use('/api/reviews', reviewRoutes); // 2. Register the review endpoint
 
 // --- START SERVER ---
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`🚀 MyStay Server running on http://localhost:${PORT}`);
-});
+
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`🚀 MyStay Server running on http://localhost:${PORT}`);
+    });
+}
+
+module.exports = app;
