@@ -14,7 +14,7 @@ const protect = (req, res, next) => {
 
             // Attach the user data to the request object
             req.user = decoded;
-            
+
             next(); // Move to the next function (the actual route)
         } catch (error) {
             console.error("Not authorized, token failed");
