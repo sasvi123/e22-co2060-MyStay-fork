@@ -1,0 +1,26 @@
+On branch sasvi_imp
+Your branch is ahead of 'origin/sasvi_imp' by 1 commit.
+  (use "git push" to publish your local commits)
+
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	modified:   code/front_end/node_modules/.package-lock.json
+	modified:   code/front_end/node_modules/.vite/deps/@radix-ui_react-dialog.js.map
+	deleted:    code/front_end/node_modules/.vite/deps/@radix-ui_react-radio-group.js.map
+	modified:   code/front_end/package-lock.json
+	modified:   code/front_end/package.json
+
+Unmerged paths:
+  (use "git restore --staged <file>..." to unstage)
+  (use "git add/rm <file>..." as appropriate to mark resolution)
+	both modified:   code/front_end/node_modules/.vite/deps/@radix-ui_react-dialog.js
+	deleted by them: code/front_end/node_modules/.vite/deps/@radix-ui_react-radio-group.js
+	both modified:   code/front_end/node_modules/.vite/deps/@radix-ui_react-select.js
+	both modified:   code/front_end/node_modules/.vite/deps/@radix-ui_react-select.js.map
+	both modified:   code/front_end/node_modules/.vite/deps/_metadata.json
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	conflicts.txt
+	status.txt
+

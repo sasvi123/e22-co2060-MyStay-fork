@@ -1,0 +1,40 @@
+{
+  "title": "MyStay – Boarding Place Finder Web Application",
+
+  "team": [
+    {
+      "name": "A.S.V. Gunasiri",
+      "email": "e22120@eng.pdn.ac.lk",
+      "eNumber": "E/22/120"
+    },
+    {
+      "name": "H.M.H.N. Aberathna",
+      "email": "e22001@eng.pdn.ac.lk",
+      "eNumber": "E/22/001"
+    },
+    {
+      "name": "M.A.N.P. Anawarathne",
+      "email": "e22027@eng.pdn.ac.lk",
+      "eNumber": "E/22/027"
+    },
+    {
+      "name": "P.H.D. Rathnasiri",
+      "email": "e22324@eng.pdn.ac.lk",
+      "eNumber": "E/22/324"
+    }
+  ],
+
+  "supervisors": [
+    {
+      "name": "To be updated",
+      "email": "To be updated"
+    }
+  ],
+
+  "tags": ["Web", "Software Systems", "CO2060"],
+
+  "image": "To be updated",
+  "thumbnail": "To be updated"
+}
+
+

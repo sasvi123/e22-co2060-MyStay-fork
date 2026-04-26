@@ -1,0 +1,5 @@
+code/front_end/node_modules/.vite/deps/@radix-ui_react-dialog.js
+code/front_end/node_modules/.vite/deps/@radix-ui_react-radio-group.js
+code/front_end/node_modules/.vite/deps/@radix-ui_react-select.js
+code/front_end/node_modules/.vite/deps/@radix-ui_react-select.js.map
+code/front_end/node_modules/.vite/deps/_metadata.json
