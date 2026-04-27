@@ -7,7 +7,8 @@ require('dotenv').config();
 const app = express();
 
 // --- MIDDLEWARE ---
-app.use(cors({origin: ['http://localhost:5174','http://localhost:5173'], // Ensure this matches your terminal output
+app.use(cors({
+    origin: ['http://localhost:5174', 'http://localhost:5173'], // Ensure this matches your terminal output
     credentials: true
 }));
 app.use(express.json());
@@ -21,6 +22,7 @@ const pool = mysql.createPool({
     database: process.env.DB_NAME, // This will use 'mystay_db'
     ssl: {
         ca: fs.existsSync('./ca.pem') ? fs.readFileSync('./ca.pem') : undefined,
+        ca: fs.readFileSync('./ca.pem'),
         rejectUnauthorized: false,
     },
     waitForConnections: true,
@@ -57,11 +59,6 @@ app.use('/api/reviews', reviewRoutes); // 2. Register the review endpoint
 
 // --- START SERVER ---
 const PORT = process.env.PORT || 3000;
-
-if (require.main === module) {
-    app.listen(PORT, () => {
-        console.log(`🚀 MyStay Server running on http://localhost:${PORT}`);
-    });
-}
-
-module.exports = app;
+app.listen(PORT, () => {
+    console.log(`🚀 MyStay Server running on http://localhost:${PORT}`);
+});
