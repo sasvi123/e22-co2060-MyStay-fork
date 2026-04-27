@@ -13,6 +13,7 @@ export interface BoardingListing {
   landlordContact: string;
   distance: string; // distance from university
   rating: number;
+  map_url?: string;
 }
 
 export const mockListings: BoardingListing[] = [
@@ -31,6 +32,7 @@ export const mockListings: BoardingListing[] = [
     landlordContact: '077-1234567',
     distance: '0.5 km from UOP',
     rating: 4.5,
+    map_url: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d13782.296434077045!2d80.5851669824796!3d7.249400845648552!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae36f2eaed6eea1%3A0xe384f24be15be3b9!2sMeewathura!5e0!3m2!1sen!2slk!4v1777313832134!5m2!1sen!2slk" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade',
   },
   {
     id: '2',
@@ -111,6 +113,7 @@ export const mockListings: BoardingListing[] = [
     landlordContact: '071-4567890',
     distance: '0.3 km from UOP',
     rating: 4.2,
+    map_url: 'https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d31664.193374672996!2d80.5745137!3d7.2380819!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae36f267da6451d%3A0x772d73835b2d98ac!2sAngunawela%20Bus%20Stop!5e0!3m2!1sen!2slk!4v1777276309645!5m2!1sen!2slk" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade',
   },
   {
     id: '7',
