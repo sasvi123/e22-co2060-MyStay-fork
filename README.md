@@ -48,8 +48,19 @@ The design focuses on usability, responsiveness, and clean user interaction flow
 ---
 
 ## Testing
-<!-- Testing section will be updated later -->
-*Testing is currently in progress and will be added here once complete.*
+This project includes an automated test suite to validate core functionalities. The testing framework is currently under active development, and coverage will continue to expand as new features are implemented.
+
+📌 Test Modules Overview
+auth.test.js - Covers authentication workflows such as user login, signup, and token validation.
+basic.test.js - Contains general unit tests for core application functionality.
+security.test.js - Validates security rules, access control, and authorization mechanisms.
+stays.test.js - Tests features related to boarding/stay listings and related operations.
+
+📌 Current Status
+Test suite structure initialized
+Test cases are actively being developed
+Expanded coverage and edge-case testing planned
+Integration and end-to-end testing to be added in future updates
 
 ---
 
