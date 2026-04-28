@@ -18,8 +18,8 @@ export function Home() {
 
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium mb-8" style={{ backgroundColor: 'rgba(82,183,136,0.2)', color: '#52b788', border: '1px solid rgba(82,183,136,0.3)' }}>
-              <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: '#52b788' }} />
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium mb-8" style={{ backgroundColor: 'rgba(82,183,136,0.2)', color: '#e4efea', border: '1px solid rgba(220, 236, 228, 0.3)' }}>
+              <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: '#e4efea' }} />
               Near University of Peradeniya
             </div>
             <h1 className="text-5xl md:text-6xl font-normal mb-6 text-white leading-tight" style={{ fontFamily: "'DM Serif Display', serif" }}>
@@ -37,7 +37,7 @@ export function Home() {
                 </Button>
               </Link>
               <Link to="/landlord-dashboard">
-                <Button size="lg" variant="outline" className="gap-2 px-8 text-base font-medium" style={{ borderColor: 'rgba(255,255,255,0.4)', color: 'white', backgroundColor: 'transparent' }}>
+                <Button size="lg" variant="outline" className="gap-2 px-8 text-base font-medium" style={{ borderColor: 'rgba(255,255,255,0.4)', color: 'white', backgroundColor: '#e07b39' }}>
                   List Your Property
                   <ArrowRight className="w-4 h-4" />
                 </Button>
@@ -68,7 +68,7 @@ export function Home() {
             <div className="text-center mb-14">
               <p className="text-sm font-semibold tracking-widest uppercase mb-3" style={{ color: '#e07b39' }}>The Problem</p>
               <h2 className="text-4xl font-normal" style={{ fontFamily: "'DM Serif Display', serif", color: '#0d1f1d' }}>
-                Why Finding Boarding<br />Has Always Been Hard
+                Boarding Hunt:<br />A Frustrating Student Experienc
               </h2>
             </div>
             <div className="grid md:grid-cols-3 gap-6">
@@ -77,8 +77,8 @@ export function Home() {
                   icon: Clock,
                   title: 'Time-Consuming Search',
                   desc: 'Students waste hours visiting unsuitable boarding places scattered across social media and word-of-mouth.',
-                  color: '#e07b39',
-                  bg: '#fdf0e8',
+                  color: '#1a7a6e',
+                  bg: '#e8f5f3',
                 },
                 {
                   icon: Shield,
@@ -91,14 +91,14 @@ export function Home() {
                   icon: Users,
                   title: 'Landlord Challenges',
                   desc: 'Property owners struggle to reach genuine tenants efficiently and manage their listings well.',
-                  color: '#52b788',
-                  bg: '#d8f3dc',
+                  color: '#1a7a6e',
+                  bg: '#e8f5f3',
                 },
               ].map(({ icon: Icon, title, desc, color, bg }) => (
                 <Card key={title} className="border-0 shadow-sm hover:shadow-md transition-shadow">
                   <CardContent className="pt-6 pb-6">
                     <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ backgroundColor: bg }}>
-                      <Icon className="w-6 h-6" style={{ color }} />
+                      <Icon className="w-6 h-6" style={{ color: '#2b534e' }} />
                     </div>
                     <h3 className="font-semibold mb-2" style={{ color: '#0d1f1d' }}>{title}</h3>
                     <p className="text-sm leading-relaxed" style={{ color: '#5a7874' }}>{desc}</p>

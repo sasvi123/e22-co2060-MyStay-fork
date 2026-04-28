@@ -8,7 +8,7 @@ import { Label } from '../components/ui/label';
 
 function MyStayLogo() {
   return (
-    <svg width="44" height="44" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="60" height="60" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M24 4L4 20V44H18V32H30V44H44V20L24 4Z" fill="#1a7a6e"/>
       <path d="M24 4L4 20H44L24 4Z" fill="#2a9d8f"/>
       <path d="M14 26V38H17V30L21 35L24 30.5L27 35L31 30V38H34V26L24 21L14 26Z" fill="white"/>
@@ -69,7 +69,7 @@ export function Login() {
           <MyStayLogo />
           <div>
             <p className="text-white text-xl font-normal" style={{ fontFamily: "'DM Serif Display', serif" }}>MyStay</p>
-            <p className="text-xs tracking-widest uppercase" style={{ color: '#52b788' }}>Find Your Space</p>
+            <p className="text-xs tracking-widest uppercase" style={{ color: '#e07b39' }}>Find Your Space</p>
           </div>
         </Link>
         <div className="relative z-10">
@@ -81,7 +81,7 @@ export function Login() {
             Connect with verified boarding places near University of Peradeniya — fast, transparent, and hassle-free.
           </p>
         </div>
-        <p className="text-xs relative z-10" style={{ color: 'rgba(255,255,255,0.35)' }}>
+        <p className="text-xs relative z-10" style={{ color: '#52b788' }}>
           © 2026 MyStay · CO2060 Software Systems
         </p>
       </div>
@@ -128,7 +128,7 @@ export function Login() {
 
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <Label htmlFor="password" className="text-sm" style={{ color: '#0d1f1d' }}>Password</Label>
+                    <Label htmlFor="password" className="text-sm" style={{ color: '#1f1c0d' }}>Password</Label>
                     <a href="#" className="text-xs hover:underline" style={{ color: '#1a7a6e' }}>Forgot password?</a>
                   </div>
                   <div className="relative">
