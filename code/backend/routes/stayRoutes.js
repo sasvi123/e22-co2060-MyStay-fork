@@ -27,7 +27,7 @@ router.get('/', async (req, res) => {
 
 // POST /api/stays - Create a new boarding place
 router.post('/', protect, async (req, res) => {
-    const { title, description, price, address, latitude, longitude, roomType, gender, facilities, availability } = req.body;
+    const { title, description, price, address, latitude, longitude, roomType, gender, facilities, availability, map_url } = req.body;
     const pool = req.pool;
     const landlord_id = req.user.id; // From authMiddleware
 
@@ -35,19 +35,21 @@ router.post('/', protect, async (req, res) => {
     if (!title || !price || !latitude || !longitude) {
         return res.status(400).json({ error: "Missing required fields" });
     }
-
+    //add map_url to columns and array of parameters
     try {
         const query = `
+        
             INSERT INTO Stays 
-            (title, description, price, address, latitude, longitude, landlord_id, roomType, gender, facilities, availability) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            (title, description, price, address, latitude, longitude, landlord_id, roomType, gender, facilities, availability, map_url) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
         const [result] = await pool.query(query, [
             title, description, price, address, latitude, longitude, landlord_id,
             roomType || 'Single',
             gender || 'Any',
             facilities || '',
-            availability || 'Available'
+            availability || 'Available',
+            map_url || null // Save null if empty
         ]);
 
         res.status(201).json({

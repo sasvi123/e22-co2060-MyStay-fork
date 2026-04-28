@@ -87,6 +87,7 @@ export function LandlordDashboard() {
     description: '',
     latitude: undefined as number | undefined,
     longitude: undefined as number | undefined,
+    map_url: '',
   };
 
   const [newListing, setNewListing] = useState(defaultListing);
@@ -111,6 +112,7 @@ export function LandlordDashboard() {
       description: listing.description,
       latitude: listing.latitude,
       longitude: listing.longitude,
+      map_url: listing.map_url || '',
     });
     setIsDialogOpen(true);
   };
@@ -144,7 +146,8 @@ export function LandlordDashboard() {
             roomType: newListing.roomType,
             gender: newListing.gender,
             facilities: newListing.facilities,
-            availability: 'Available' // Default for new listings
+            availability: 'Available', // Default for new listings
+            map_url: newListing.map_url
           })
         });
 
@@ -255,6 +258,12 @@ export function LandlordDashboard() {
                       <Label htmlFor="description">Description</Label>
                       <Textarea id="description" placeholder="Describe your boarding place…" rows={4}
                         value={newListing.description} onChange={(e) => setNewListing({ ...newListing, description: e.target.value })} />
+                    </div>
+                    <div>
+                      <Label htmlFor="map_url">Google Maps URL (Optional)</Label>
+                      <Input id="map_url" placeholder="Paste Google Maps URL here"
+                        value={newListing.map_url}
+                        onChange={(e) => setNewListing({ ...newListing, map_url: e.target.value })} />
                     </div>
 
                     <div className="space-y-2">
