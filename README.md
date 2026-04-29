@@ -74,6 +74,6 @@ MyStay provides an efficient and user-friendly solution for discovering and mana
 ## Links
 - [Project Repository](https://github.com/cepdnaclk/e22-co2060-MyStay-Boarding-Platform)
 - [Project Page](https://cepdnaclk.github.io/e22-co2060-MyStay-Boarding-Platform)
-- [Department of Computer Engineering, University of Peradeniya](http://www.ce.pdn.ac.lk/){:target="_blank"}
-- [University of Peradeniya](https://eng.pdn.ac.lk/){:target="_blank"}
+- [Department of Computer Engineering, University of Peradeniya](http://www.ce.pdn.ac.lk/)
+- [University of Peradeniya](https://eng.pdn.ac.lk/)
 
