@@ -188,5 +188,43 @@ router.delete('/:id', protect, async (req, res) => {
         res.status(500).json({ error: "Server error while deleting listing" });
     }
 });
+// POST /api/stays/:id/book - Book a boarding place
+router.post('/:id/book', protect, async (req, res) => {
+    const stayId = req.params.id;
+    const studentId = req.user.id;
+    const pool = req.pool;
+
+    try {
+        // 1. Check if the stay exists and is available
+        const [rows] = await pool.query('SELECT availability, landlord_id FROM Stays WHERE stay_id = ?', [stayId]);
+        if (rows.length === 0) {
+            return res.status(404).json({ error: "Stay not found" });
+        }
+        
+        const stay = rows[0];
+        if (stay.availability === 'Booked') {
+            return res.status(400).json({ error: "This place is already booked." });
+        }
+
+        // Prevent landlords from booking their own place
+        if (stay.landlord_id === studentId) {
+            return res.status(400).json({ error: "You cannot book your own listing." });
+        }
+
+        // 2. Insert into Booking_Requests table
+        await pool.query(
+            'INSERT INTO Booking_Requests (student_id, listing_id, status) VALUES (?, ?, ?)',
+            [studentId, stayId, 'approved'] // Setting to approved immediately as per requirements
+        );
+
+        // 3. Update the Stays table availability to 'Booked'
+        await pool.query('UPDATE Stays SET availability = ? WHERE stay_id = ?', ['Booked', stayId]);
+
+        res.json({ message: "Booking successful!" });
+    } catch (err) {
+        console.error("Booking Error:", err);
+        res.status(500).json({ error: "Server error while processing booking" });
+    }
+});
 
 module.exports = router;
