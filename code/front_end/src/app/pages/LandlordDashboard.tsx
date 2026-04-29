@@ -7,8 +7,6 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Textarea } from '../components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
-import { mockListings, BoardingListing } from '../data/mockListings';
-import { imageMapping } from '../data/imageMapping';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
@@ -56,7 +54,6 @@ export function LandlordDashboard() {
           id: stay.stay_id.toString(),
           location: stay.address,
           facilities: stay.facilities ? stay.facilities.split(',').map((f: string) => f.trim()) : [],
-          images: ['bedroom-study-desk', 'modern-bathroom'], // Dummy images since they aren't in DB yet
           rating: 4.5, // Dummy rating
           distance: 'Unknown distance', // Dummy distance
           availability: stay.availability || 'Available',
@@ -88,14 +85,17 @@ export function LandlordDashboard() {
     latitude: undefined as number | undefined,
     longitude: undefined as number | undefined,
     map_url: '',
+    availability: 'Available'
   };
 
   const [newListing, setNewListing] = useState(defaultListing);
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
   const handleOpenAdd = () => {
     setIsEditMode(false);
     setEditingId(null);
     setNewListing(defaultListing);
+    setImageFile(null);
     setIsDialogOpen(true);
   };
 
@@ -113,42 +113,81 @@ export function LandlordDashboard() {
       latitude: listing.latitude,
       longitude: listing.longitude,
       map_url: listing.map_url || '',
+      availability: listing.availability || 'Available'
     });
+    setImageFile(null);
     setIsDialogOpen(true);
   };
 
   const handleSaveListing = async () => {
     if (isEditMode && editingId) {
-      // In a real app, update the backend here with a PUT request
-      setListings(listings.map(l => l.id === editingId ? {
-        ...l,
-        ...newListing,
-        price: Number(newListing.price),
-        facilities: newListing.facilities.split(',').map(s => s.trim())
-      } : l));
-      setIsDialogOpen(false);
+      try {
+        const token = localStorage.getItem('token');
+        const formData = new FormData();
+        formData.append('title', newListing.title);
+        formData.append('description', newListing.description);
+        formData.append('price', newListing.price.toString());
+        formData.append('address', newListing.location);
+        formData.append('latitude', (newListing.latitude || 6.9271).toString());
+        formData.append('longitude', (newListing.longitude || 79.8612).toString());
+        formData.append('roomType', newListing.roomType);
+        formData.append('gender', newListing.gender);
+        formData.append('facilities', newListing.facilities);
+        formData.append('availability', (newListing as any).availability || 'Available');
+        if (newListing.map_url) {
+            formData.append('map_url', newListing.map_url);
+        }
+        if (imageFile) {
+            formData.append('image', imageFile);
+        }
+
+        const response = await fetch(`http://localhost:3000/api/stays/${editingId}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          body: formData
+        });
+
+        if (response.ok) {
+          alert('Listing updated successfully!');
+          fetchListings(); // Refresh the list
+          setIsDialogOpen(false);
+        } else {
+          const data = await response.json();
+          alert(`Error: ${data.error}`);
+        }
+      } catch (error) {
+        console.error('Failed to update listing:', error);
+        alert('Failed to update listing. Please try again.');
+      }
     } else {
       try {
         const token = localStorage.getItem('token');
+        const formData = new FormData();
+        formData.append('title', newListing.title);
+        formData.append('description', newListing.description);
+        formData.append('price', newListing.price.toString());
+        formData.append('address', newListing.location);
+        formData.append('latitude', (newListing.latitude || 6.9271).toString());
+        formData.append('longitude', (newListing.longitude || 79.8612).toString());
+        formData.append('roomType', newListing.roomType);
+        formData.append('gender', newListing.gender);
+        formData.append('facilities', newListing.facilities);
+        formData.append('availability', 'Available');
+        if (newListing.map_url) {
+            formData.append('map_url', newListing.map_url);
+        }
+        if (imageFile) {
+            formData.append('image', imageFile);
+        }
+
         const response = await fetch('http://localhost:3000/api/stays', {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
+            'Authorization': `Bearer ${token}`
           },
-          body: JSON.stringify({
-            title: newListing.title,
-            description: newListing.description,
-            price: Number(newListing.price),
-            address: newListing.location,
-            latitude: newListing.latitude || 6.9271, // fallback to Colombo 
-            longitude: newListing.longitude || 79.8612,
-            roomType: newListing.roomType,
-            gender: newListing.gender,
-            facilities: newListing.facilities,
-            availability: 'Available', // Default for new listings
-            map_url: newListing.map_url
-          })
+          body: formData
         });
 
         if (response.ok) {
@@ -166,9 +205,27 @@ export function LandlordDashboard() {
     }
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (confirm('Are you sure you want to delete this listing?')) {
-      setListings(listings.filter((l) => l.id !== id));
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`http://localhost:3000/api/stays/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          setListings(listings.filter((l) => l.id !== id));
+        } else {
+          const data = await response.json();
+          alert(`Error: ${data.error}`);
+        }
+      } catch (error) {
+        console.error('Failed to delete listing:', error);
+        alert('Failed to delete listing. Please try again.');
+      }
     }
   };
 
@@ -260,6 +317,15 @@ export function LandlordDashboard() {
                         value={newListing.description} onChange={(e) => setNewListing({ ...newListing, description: e.target.value })} />
                     </div>
                     <div>
+                      <Label htmlFor="image">Upload Image</Label>
+                      <Input id="image" type="file" accept="image/*"
+                        onChange={(e) => {
+                          if (e.target.files && e.target.files[0]) {
+                            setImageFile(e.target.files[0]);
+                          }
+                        }} />
+                    </div>
+                    <div>
                       <Label htmlFor="map_url">Google Maps URL (Optional)</Label>
                       <Input id="map_url" placeholder="Paste Google Maps URL here"
                         value={newListing.map_url}
@@ -331,8 +397,20 @@ export function LandlordDashboard() {
             <div className="space-y-4">
               {listings.map((listing) => (
                 <div key={listing.id} className="flex items-start gap-4 p-4 rounded-xl transition-shadow hover:shadow-md" style={{ border: '1px solid rgba(26,122,110,0.1)', backgroundColor: 'white' }}>
-                  <div className="w-28 h-28 flex-shrink-0 overflow-hidden rounded-xl">
-                    <img src={imageMapping[listing.images[0]]} alt={listing.title} className="w-full h-full object-cover" />
+                  <div className="w-32 flex-shrink-0 flex flex-col gap-2">
+                    <div className="w-full h-24 overflow-hidden rounded-xl">
+                      <img src={listing.image_url || 'https://via.placeholder.com/150'} alt={listing.title} className="w-full h-full object-cover" />
+                    </div>
+                    {(listing.latitude && listing.longitude) ? (
+                      <div className="w-full h-24 overflow-hidden rounded-xl border">
+                        <MapContainer center={[listing.latitude, listing.longitude]} zoom={13} style={{ height: '100%', width: '100%', zIndex: 0 }} zoomControl={false} dragging={false} scrollWheelZoom={false}>
+                          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                          <Marker position={[listing.latitude, listing.longitude]} />
+                        </MapContainer>
+                      </div>
+                    ) : listing.map_url ? (
+                      <div className="w-full h-24 overflow-hidden rounded-xl border" dangerouslySetInnerHTML={{ __html: listing.map_url.replace(/width="\d+"/, 'width="100%"').replace(/height="\d+"/, 'height="100%"') }} />
+                    ) : null}
                   </div>
 
                   <div className="flex-1 min-w-0">

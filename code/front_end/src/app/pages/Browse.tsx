@@ -6,8 +6,7 @@ import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Badge } from '../components/ui/badge';
-import { mockListings } from '../data/mockListings';
-import { imageMapping } from '../data/imageMapping';
+import { MapContainer, TileLayer, Marker } from 'react-leaflet';
 
 export function Browse() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -31,7 +30,6 @@ export function Browse() {
             id: stay.stay_id.toString(),
             location: stay.address,
             facilities: stay.facilities ? stay.facilities.split(',').map((f: string) => f.trim()) : [],
-            images: ['bedroom-study-desk', 'modern-bathroom'], 
             rating: 4.5, 
             distance: 'Unknown distance', 
             availability: stay.availability || 'Available',
@@ -201,13 +199,27 @@ export function Browse() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredListings.map((listing) => (
             <Link key={listing.id} to={`/listing/${listing.id}`}>
-              <Card className="h-full cursor-pointer overflow-hidden shadow-sm hover:shadow-lg transition-all duration-200 group border-0" style={{ border: '1px solid rgba(26,122,110,0.1)' }}>
-                <div className="aspect-video overflow-hidden relative">
-                  <img
-                    src={imageMapping[listing.images[0]]}
-                    alt={listing.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
+              <Card className="h-full cursor-pointer overflow-hidden shadow-sm hover:shadow-lg transition-all duration-200 group border-0 flex flex-col" style={{ border: '1px solid rgba(26,122,110,0.1)' }}>
+                <div className="h-48 flex w-full relative">
+                  <div className="w-1/2 h-full overflow-hidden">
+                    <img
+                      src={listing.image_url || 'https://via.placeholder.com/600x400?text=No+Image'}
+                      alt={listing.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                  <div className="w-1/2 h-full overflow-hidden border-l">
+                    {(listing.latitude && listing.longitude) ? (
+                      <MapContainer center={[listing.latitude, listing.longitude]} zoom={13} style={{ height: '100%', width: '100%', zIndex: 0 }} zoomControl={false} dragging={false} scrollWheelZoom={false}>
+                        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                        <Marker position={[listing.latitude, listing.longitude]} />
+                      </MapContainer>
+                    ) : listing.map_url ? (
+                      <div className="w-full h-full" dangerouslySetInnerHTML={{ __html: listing.map_url.replace(/width="\d+"/, 'width="100%"').replace(/height="\d+"/, 'height="100%"') }} />
+                    ) : (
+                      <div className="w-full h-full bg-gray-100 flex items-center justify-center text-xs text-gray-500">No Location</div>
+                    )}
+                  </div>
                   {/* Availability badge */}
                   <div className="absolute top-3 right-3">
                     {listing.availability === 'Available' ? (
