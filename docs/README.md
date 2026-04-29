@@ -54,6 +54,23 @@ The design focuses on usability, responsiveness, and clean user interaction flow
 
 ## Testing
 
+This project includes an automated test suite to validate core functionalities. The testing framework is currently under active development, and coverage will continue to expand as new features are implemented.
+
+Test Modules Overview
+
+1. auth.test.js - Covers authentication workflows such as user login, signup, and token validation. </br>
+2. basic.test.js - Contains general unit tests for core application functionality.
+3. security.test.js - Validates security rules, access control, and authorization mechanisms.
+4. stays.test.js - Tests features related to boarding/stay listings and related operations.
+
+Current Status
+
+- Test suite structure initialized
+- Test cases are actively being developed
+- Expanded coverage and edge-case testing planned
+- Integration and end-to-end testing to be added in future updates
+
+---
 <!-- Testing section will be updated later -->
 
 ## Conclusion
@@ -62,8 +79,8 @@ MyStay provides an efficient and user-friendly solution for discovering and mana
 
 ## Links
 
-- [Project Repository](https://github.com/cepdnaclk/e22-co2060-MyStay-Boarding-Platform){:target="_blank"}
-- [Project Page](https://cepdnaclk.github.io/e22-co2060-MyStay-Boarding-Platform){:target="_blank"}
+- [Project Repository](https://github.com/cepdnaclk/e22-co2060-MyStay-Boarding-Platform)
+- [Project Page](https://cepdnaclk.github.io/e22-co2060-MyStay-Boarding-Platform)
 - [Department of Computer Engineering](http://www.ce.pdn.ac.lk/)
 - [University of Peradeniya](https://eng.pdn.ac.lk/)
 
