@@ -95,6 +95,8 @@ export function ListingDetail() {
     }
   }, [id]);
 
+
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#f7fafa' }}>
@@ -297,12 +299,17 @@ export function ListingDetail() {
                   <Button 
                     className="w-full gap-2 font-semibold" 
                     size="lg" 
-                    style={{ backgroundColor: '#e07b39', color: 'white', border: 'none' }}
+                    style={{ 
+                      backgroundColor: listing.availability === 'Booked' || listing.availability === 'Not Available' ? '#ccc' : '#e07b39', 
+                      color: 'white', 
+                      border: 'none',
+                      cursor: listing.availability === 'Booked' || listing.availability === 'Not Available' ? 'not-allowed' : 'pointer'
+                    }}
                     onClick={handleBookNow}
                     disabled={isBooking || listing.availability !== 'Available'}
                   >
                     <Calendar className="w-4 h-4" />
-                    {isBooking ? 'Submitting...' : 'Book Now'}
+                    {isBooking ? 'Submitting...' : (listing.availability === 'Booked' || listing.availability === 'Not Available') ? 'Not Available' : 'Book Now'}
                   </Button>
                   <Button className="w-full gap-2 font-semibold" size="lg" style={{ backgroundColor: '#1a7a6e', color: 'white', border: 'none' }}>
                     <Phone className="w-4 h-4" />
