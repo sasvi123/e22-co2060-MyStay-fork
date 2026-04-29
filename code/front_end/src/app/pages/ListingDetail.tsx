@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router';
-import { MapPin, DollarSign, Users, Star, Phone, ArrowLeft, CheckCircle, MessageCircle } from 'lucide-react';
+import { MapPin, DollarSign, Users, Star, Phone, ArrowLeft, CheckCircle, MessageCircle, Calendar } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { ReviewSection } from '../components/ReviewSection';
@@ -22,8 +22,46 @@ export function ListingDetail() {
   const { id } = useParams();
   const [listing, setListing] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isBooking, setIsBooking] = useState(false);
 
   const currentUser = JSON.parse(localStorage.getItem('user') || 'null');
+
+  const handleBookNow = async () => {
+    if (!currentUser) {
+      alert("Please log in to book a listing.");
+      return;
+    }
+    
+    if (currentUser.role === 'landlord') {
+      alert("Landlords cannot book listings.");
+      return;
+    }
+
+    setIsBooking(true);
+    try {
+      const response = await fetch('http://localhost:3000/api/bookings/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          student_id: currentUser.id,
+          listing_id: listing.stay_id || id
+        })
+      });
+
+      const data = await response.json();
+      
+      if (response.ok) {
+        alert("Booking request submitted successfully! The landlord will review your request.");
+      } else {
+        alert(data.error || "Failed to submit booking request.");
+      }
+    } catch (error) {
+      console.error('Booking error:', error);
+      alert("An error occurred while submitting your booking request.");
+    } finally {
+      setIsBooking(false);
+    }
+  };
 
   useEffect(() => {
     const fetchListing = async () => {
@@ -256,6 +294,16 @@ export function ListingDetail() {
                 </div>
 
                 <div className="space-y-3">
+                  <Button 
+                    className="w-full gap-2 font-semibold" 
+                    size="lg" 
+                    style={{ backgroundColor: '#e07b39', color: 'white', border: 'none' }}
+                    onClick={handleBookNow}
+                    disabled={isBooking || listing.availability !== 'Available'}
+                  >
+                    <Calendar className="w-4 h-4" />
+                    {isBooking ? 'Submitting...' : 'Book Now'}
+                  </Button>
                   <Button className="w-full gap-2 font-semibold" size="lg" style={{ backgroundColor: '#1a7a6e', color: 'white', border: 'none' }}>
                     <Phone className="w-4 h-4" />
                     Call Now
