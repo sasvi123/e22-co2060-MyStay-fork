@@ -22,6 +22,7 @@ export function ListingDetail() {
   const { id } = useParams();
   const [listing, setListing] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isBooking, setIsBooking] = useState(false);
 
   const currentUser = JSON.parse(localStorage.getItem('user') || 'null');
 
@@ -56,6 +57,38 @@ export function ListingDetail() {
         fetchListing();
     }
   }, [id]);
+
+  const handleBook = async () => {
+    if (!currentUser) {
+      alert("Please login to book this place.");
+      return;
+    }
+    
+    setIsBooking(true);
+    try {
+      const response = await fetch(`http://localhost:3000/api/stays/${id}/book`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        alert("Booking successful!");
+        setListing({ ...listing, availability: 'Booked' });
+      } else {
+        alert(data.error || "Failed to book this place.");
+      }
+    } catch (error) {
+      console.error("Booking error:", error);
+      alert("An error occurred while booking.");
+    } finally {
+      setIsBooking(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -256,6 +289,21 @@ export function ListingDetail() {
                 </div>
 
                 <div className="space-y-3">
+                  <Button 
+                    className="w-full gap-2 font-semibold" 
+                    size="lg" 
+                    style={{ 
+                      backgroundColor: listing.availability === 'Booked' ? '#ccc' : '#1a7a6e', 
+                      color: 'white', 
+                      border: 'none',
+                      cursor: listing.availability === 'Booked' ? 'not-allowed' : 'pointer'
+                    }}
+                    disabled={listing.availability === 'Booked' || isBooking}
+                    onClick={handleBook}
+                  >
+                    <CheckCircle className="w-4 h-4" />
+                    {isBooking ? 'Booking...' : listing.availability === 'Booked' ? 'Booked' : 'Book Now'}
+                  </Button>
                   <Button className="w-full gap-2 font-semibold" size="lg" style={{ backgroundColor: '#1a7a6e', color: 'white', border: 'none' }}>
                     <Phone className="w-4 h-4" />
                     Call Now
