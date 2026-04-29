@@ -1,15 +1,69 @@
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router';
 import { MapPin, DollarSign, Users, Star, Phone, ArrowLeft, CheckCircle, MessageCircle } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
-import { mockListings } from '../data/mockListings';
-import { imageMapping } from '../data/imageMapping';
 import { ReviewSection } from '../components/ReviewSection';
+import { MapContainer, TileLayer, Marker } from 'react-leaflet';
+import L from 'leaflet';
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+
+// Fix for default marker icons in react-leaflet
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconUrl: markerIcon,
+  iconRetinaUrl: markerIcon2x,
+  shadowUrl: markerShadow,
+});
+
 export function ListingDetail() {
   const { id } = useParams();
-  const listing = mockListings.find((l) => l.id === id);
+  const [listing, setListing] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const currentUser = JSON.parse(localStorage.getItem('user') || 'null');
+
+  useEffect(() => {
+    const fetchListing = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/api/stays/${id}`);
+        if (response.ok) {
+          const data = await response.json();
+          setListing({
+            ...data,
+            id: data.stay_id.toString(),
+            location: data.address,
+            facilities: data.facilities ? data.facilities.split(',').map((f: string) => f.trim()) : [],
+            rating: 4.5, // Dummy rating
+            distance: 'Unknown distance', // Dummy distance
+            availability: data.availability || 'Available',
+            price: Number(data.price),
+            roomType: data.roomType || 'Single',
+            gender: data.gender || 'Any',
+            landlordName: data.landlordName || 'Unknown Landlord',
+            landlordContact: data.landlordContact || 'No contact info'
+          });
+        }
+      } catch (error) {
+        console.error('Failed to fetch listing:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    if (id) {
+        fetchListing();
+    }
+  }, [id]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#f7fafa' }}>
+        <p className="text-gray-500">Loading...</p>
+      </div>
+    );
+  }
 
   if (!listing) {
     return (
@@ -50,21 +104,8 @@ export function ListingDetail() {
             {/* Images */}
             <div className="rounded-2xl overflow-hidden shadow-sm" style={{ border: '1px solid rgba(26,122,110,0.1)' }}>
               <div className="aspect-video overflow-hidden">
-                <img src={imageMapping[listing.images[0]]} alt={listing.title} className="w-full h-full object-cover" />
+                <img src={listing.image_url || 'https://via.placeholder.com/800x450?text=No+Image'} alt={listing.title} className="w-full h-full object-cover" />
               </div>
-              {listing.images.length > 1 && (
-                <div className="grid grid-cols-3 gap-2 p-3 bg-white">
-                  {listing.images.slice(1).map((image, index) => (
-                    <div key={index} className="aspect-video overflow-hidden rounded-xl">
-                      <img
-                        src={imageMapping[image]}
-                        alt={`${listing.title} ${index + 2}`}
-                        className="w-full h-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
 
             {/* Title + Info */}
@@ -147,7 +188,7 @@ export function ListingDetail() {
                   Facilities & Amenities
                 </h2>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                  {listing.facilities.map((facility, index) => (
+                  {listing.facilities.map((facility: string, index: number) => (
                     <div key={index} className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl" style={{ backgroundColor: '#f7fafa', border: '1px solid rgba(26,122,110,0.1)' }}>
                       <CheckCircle className="w-4 h-4 flex-shrink-0" style={{ color: '#52b788' }} />
                       <span className="text-sm font-medium" style={{ color: '#0d1f1d' }}>{facility}</span>
@@ -157,27 +198,39 @@ export function ListingDetail() {
               </CardContent>
             </Card>
 
-            {/* map url */}
-            {listing.map_url && (
-              <Card className="shadow-sm border-0 mt-6" style={{ border: '1px solid rgba(26,122,110,0.1)' }}>
-                <CardContent className="pt-6 pb-6">
-                  <h2 className="text-xl font-normal mb-4" style={{ fontFamily: "'DM Serif Display', serif", color: '#0d1f1d' }}>
+            {/* map url or coordinates */}
+            <Card className="shadow-sm border-0 mt-6" style={{ border: '1px solid rgba(26,122,110,0.1)' }}>
+              <CardContent className="pt-6 pb-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-xl font-normal" style={{ fontFamily: "'DM Serif Display', serif", color: '#0d1f1d' }}>
                     Location
                   </h2>
-                  <div className="w-full h-[300px] rounded-lg overflow-hidden border">
-                    <iframe
-                      src={listing.map_url}
-                      width="100%"
-                      height="100%"
-                      style={{ border: 0 }}
-                      allowFullScreen={true}
-                      loading="lazy"
-                      title="Boarding Location"
-                    ></iframe>
+                  {listing.map_url && !listing.map_url.includes('<iframe') && (
+                    <a href={listing.map_url.startsWith('http') ? listing.map_url : `https://${listing.map_url}`} target="_blank" rel="noopener noreferrer">
+                      <Button variant="outline" size="sm" className="gap-2" style={{ color: '#1a7a6e', borderColor: 'rgba(26,122,110,0.2)' }}>
+                        <MapPin className="w-4 h-4" /> Open in Google Maps
+                      </Button>
+                    </a>
+                  )}
+                </div>
+                
+                {listing.map_url && listing.map_url.includes('<iframe') ? (
+                  <div className="w-full h-[300px] rounded-lg overflow-hidden border" 
+                       dangerouslySetInnerHTML={{ __html: listing.map_url.replace(/width="[^"]+"/, 'width="100%"').replace(/height="[^"]+"/, 'height="100%"') }} />
+                ) : (listing.latitude && listing.longitude) ? (
+                  <div className="w-full h-[300px] rounded-lg overflow-hidden border relative z-0">
+                    <MapContainer center={[listing.latitude, listing.longitude]} zoom={15} style={{ height: '100%', width: '100%' }}>
+                      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                      <Marker position={[listing.latitude, listing.longitude]} />
+                    </MapContainer>
                   </div>
-                </CardContent>
-              </Card>
-            )}
+                ) : (
+                  <div className="w-full h-[300px] bg-gray-100 rounded-lg flex items-center justify-center text-gray-500">
+                    Location not available
+                  </div>
+                )}
+              </CardContent>
+            </Card>
 
             {/* --- 3. Add the ReviewSection component here --- */}
             <ReviewSection listingId={id} currentUser={currentUser} />
@@ -194,7 +247,7 @@ export function ListingDetail() {
                 {/* Landlord info */}
                 <div className="flex items-center gap-3 p-4 rounded-xl mb-5" style={{ backgroundColor: '#f7fafa', border: '1px solid rgba(26,122,110,0.1)' }}>
                   <div className="w-12 h-12 rounded-full flex items-center justify-center font-semibold text-lg text-white flex-shrink-0" style={{ backgroundColor: '#1a7a6e' }}>
-                    {listing.landlordName.charAt(listing.landlordName.indexOf(' ') + 1)}
+                    {listing.landlordName.charAt(0).toUpperCase()}
                   </div>
                   <div>
                     <p className="font-semibold" style={{ color: '#0d1f1d' }}>{listing.landlordName}</p>

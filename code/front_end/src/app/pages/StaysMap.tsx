@@ -103,7 +103,7 @@ export function StaysMap() {
                                     <p className="text-xs text-gray-500 mt-1">{stay.address}</p>
                                 )}
                                 <button
-                                    onClick={() => navigate(`/stays/${stay.stay_id}`)}
+                                    onClick={() => navigate(`/listing/${stay.stay_id}`)}
                                     className="mt-3 w-full text-xs bg-blue-600 hover:bg-blue-700 text-white font-medium py-1.5 rounded transition-colors"
                                 >
                                     View Details
