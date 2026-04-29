@@ -1,5 +1,6 @@
 # Dependency directories
 node_modules/
+jspm_packages/
 
 # Environment variables and secrets (CRITICAL)
 .env
@@ -14,6 +15,7 @@ ca.pem
 # Build outputs
 dist/
 build/
+.next/
 out/
 
 # IDE / Editor folders
@@ -35,3 +37,6 @@ logs/
 # OS Metadata
 .DS_Store
 Thumbs.db
+Thumbs.db
+.env
+code/backend/.env

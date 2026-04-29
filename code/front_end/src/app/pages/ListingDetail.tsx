@@ -157,6 +157,28 @@ export function ListingDetail() {
               </CardContent>
             </Card>
 
+            {/* map url */}
+            {listing.map_url && (
+              <Card className="shadow-sm border-0 mt-6" style={{ border: '1px solid rgba(26,122,110,0.1)' }}>
+                <CardContent className="pt-6 pb-6">
+                  <h2 className="text-xl font-normal mb-4" style={{ fontFamily: "'DM Serif Display', serif", color: '#0d1f1d' }}>
+                    Location
+                  </h2>
+                  <div className="w-full h-[300px] rounded-lg overflow-hidden border">
+                    <iframe
+                      src={listing.map_url}
+                      width="100%"
+                      height="100%"
+                      style={{ border: 0 }}
+                      allowFullScreen={true}
+                      loading="lazy"
+                      title="Boarding Location"
+                    ></iframe>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             {/* --- 3. Add the ReviewSection component here --- */}
             <ReviewSection listingId={id} currentUser={currentUser} />
           </div>
