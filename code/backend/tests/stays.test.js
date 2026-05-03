@@ -1,7 +1,10 @@
 const request = require('supertest');
-const app = require('../server');
+const { app, pool } = require('../server');
 
 describe('Stay API Tests', () => {
+  afterAll(async () => {
+    await pool.end();
+  });
 
   // ✔ Get stays
   test('GET /api/stays should work', async () => {

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { PlusCircle, Edit, Trash2, Home, TrendingUp, Users } from 'lucide-react';
+import { PlusCircle, Edit, Trash2, Home, TrendingUp, Users, Calendar, CheckCircle, XCircle } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../components/ui/dialog';
@@ -32,6 +32,7 @@ function LocationPicker({ position, setPosition }: { position: { lat: number, ln
 
 export function LandlordDashboard() {
   const [listings, setListings] = useState<any[]>([]);
+  const [bookings, setBookings] = useState<any[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -70,8 +71,24 @@ export function LandlordDashboard() {
     }
   };
 
+  const fetchBookings = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      if (!user.id) return;
+      
+      const response = await fetch(`http://localhost:3000/api/bookings/landlord/${user.id}`);
+      if (response.ok) {
+        const data = await response.json();
+        setBookings(data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch bookings:', error);
+    }
+  };
+
   useEffect(() => {
     fetchListings();
+    fetchBookings();
   }, []);
 
   const defaultListing = {
@@ -229,10 +246,31 @@ export function LandlordDashboard() {
     }
   };
 
+  const handleUpdateBookingStatus = async (requestId: number, status: string) => {
+    try {
+      const response = await fetch(`http://localhost:3000/api/bookings/${requestId}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+      });
+
+      if (response.ok) {
+        alert(`Booking ${status} successfully!`);
+        fetchBookings(); // Refresh the bookings list
+      } else {
+        const data = await response.json();
+        alert(data.error || "Failed to update booking status.");
+      }
+    } catch (error) {
+      console.error("Failed to update status:", error);
+      alert("An error occurred.");
+    }
+  };
+
   const stats = [
     { label: 'Total Listings', value: listings.length, icon: Home, color: '#1a7a6e', bg: '#e8f5f3' },
     { label: 'Available', value: listings.filter((l) => l.availability === 'Available').length, icon: TrendingUp, color: '#52b788', bg: '#d8f3dc' },
-    { label: 'Occupied', value: listings.filter((l) => l.availability === 'Not Available').length, icon: Users, color: '#e07b39', bg: '#fdf0e8' },
+    { label: 'Pending Bookings', value: bookings.filter((b) => b.status === 'pending').length, icon: Calendar, color: '#e07b39', bg: '#fdf0e8' },
   ];
 
   return (
@@ -385,6 +423,72 @@ export function LandlordDashboard() {
             </Card>
           ))}
         </div>
+
+        {/* Booking Requests */}
+        {bookings.length > 0 && (
+          <Card className="shadow-sm border-0 mb-8" style={{ border: '1px solid rgba(26,122,110,0.1)' }}>
+            <CardHeader className="pb-4 border-b" style={{ borderColor: 'rgba(26,122,110,0.1)' }}>
+              <CardTitle style={{ fontFamily: "'DM Serif Display', serif", fontWeight: 400, fontSize: '22px', color: '#0d1f1d' }}>
+                Recent Booking Requests
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm text-left">
+                  <thead className="bg-gray-50 border-b" style={{ borderColor: 'rgba(26,122,110,0.1)' }}>
+                    <tr>
+                      <th className="px-6 py-4 font-medium text-gray-500">Student</th>
+                      <th className="px-6 py-4 font-medium text-gray-500">Contact</th>
+                      <th className="px-6 py-4 font-medium text-gray-500">Listing</th>
+                      <th className="px-6 py-4 font-medium text-gray-500">Date</th>
+                      <th className="px-6 py-4 font-medium text-gray-500">Status</th>
+                      <th className="px-6 py-4 font-medium text-gray-500 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y" style={{ borderColor: 'rgba(26,122,110,0.1)' }}>
+                    {bookings.map((booking) => (
+                      <tr key={booking.request_id} className="hover:bg-gray-50 transition-colors">
+                        <td className="px-6 py-4 font-medium" style={{ color: '#0d1f1d' }}>{booking.student_name}</td>
+                        <td className="px-6 py-4 text-gray-600">
+                          <div>{booking.student_phone}</div>
+                          <div className="text-xs text-gray-500">{booking.student_email}</div>
+                        </td>
+                        <td className="px-6 py-4" style={{ color: '#1a7a6e' }}>{booking.title}</td>
+                        <td className="px-6 py-4 text-gray-600">
+                          {new Date(booking.request_date).toLocaleDateString()}
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className="px-2.5 py-1 rounded-full text-xs font-semibold flex-shrink-0"
+                            style={
+                              booking.status === 'pending' ? { backgroundColor: '#fdf0e8', color: '#e07b39' } :
+                              booking.status === 'approved' ? { backgroundColor: '#d8f3dc', color: '#1a5c30' } :
+                              { backgroundColor: '#fee2e2', color: '#991b1b' }
+                            }>
+                            {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          {booking.status === 'pending' ? (
+                            <div className="flex justify-end gap-2">
+                              <Button size="sm" variant="outline" className="gap-1 h-8 text-xs bg-green-50 text-green-700 hover:bg-green-100 hover:text-green-800 border-green-200" onClick={() => handleUpdateBookingStatus(booking.request_id, 'approved')}>
+                                <CheckCircle className="w-3.5 h-3.5" /> Approve
+                              </Button>
+                              <Button size="sm" variant="outline" className="gap-1 h-8 text-xs bg-red-50 text-red-700 hover:bg-red-100 hover:text-red-800 border-red-200" onClick={() => handleUpdateBookingStatus(booking.request_id, 'rejected')}>
+                                <XCircle className="w-3.5 h-3.5" /> Reject
+                              </Button>
+                            </div>
+                          ) : (
+                            <span className="text-xs text-gray-400">Resolved</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Listings */}
         <Card className="shadow-sm border-0" style={{ border: '1px solid rgba(26,122,110,0.1)' }}>

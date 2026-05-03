@@ -1,7 +1,11 @@
 const request = require('supertest');
-const app = require('../server');
+const { app, pool } = require('../server');
 
 describe('Authentication Tests', () => {
+
+  afterAll(async () => {
+    await pool.end(); // close DB connection
+  });
 
   // ❌ Invalid login
   test('Login with wrong credentials should fail', async () => {

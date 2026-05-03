@@ -61,6 +61,10 @@ app.use('/api/bookings', bookingRoutes); // 4. Register the booking endpoint
 
 // --- START SERVER ---
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`🚀 MyStay Server running on http://localhost:${PORT}`);
-});
+if (process.env.NODE_ENV !== 'test') {
+    app.listen(PORT, () => {
+        console.log(`🚀 MyStay Server running on http://localhost:${PORT}`);
+    });
+}
+
+module.exports = { app, pool };
